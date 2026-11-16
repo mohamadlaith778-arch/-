@@ -27,7 +27,8 @@ jobs:
 
       - name: Create Android folder
         run: flutter create --project-name personal_assistant . --platforms=android
-
+      - name: Auto-fix Dart code
+        run: dart fix --apply
       - name: Get dependencies
         run: flutter pub get
 
