@@ -24,28 +24,29 @@ jobs:
           channel: 'stable'
           cache: true
 
-      # 1. خطوة التنظيف الشامل
       - name: Clean project
         run: |
           flutter clean
           rm -rf .dart_tool
           rm -f pubspec.lock
 
-      # 2. إنشاء مجلد أندرويد
       - name: Create Android folder
         run: flutter create --project-name personal_assistant . --platforms=android
 
-      # 3. جلب التبعيات
+      # ✅ هذه الخطوة تقوم بإصلاح إعدادات Android تلقائياً لتتوافق مع المكتبات
+      - name: Patch build.gradle
+        run: |
+          sed -i 's/compileOptions {/compileOptions {\n        coreLibraryDesugaringEnabled true/' android/app/build.gradle
+          sed -i 's/dependencies {/dependencies {\n    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.4"/' android/app/build.gradle
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/' android/app/build.gradle
+          sed -i 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/' android/app/build.gradle
+          sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/' android/app/build.gradle
+
       - name: Get dependencies
         run: flutter pub get
 
-      # 4. محاولة إصلاح أخطاء الكود تلقائياً
-      - name: Auto-fix Dart code
-        run: dart fix --apply
-
-      # 5. محاولة البناء (سيطبع السبب الحقيقي إذا فشل)
       - name: Build APK
-        run: flutter build apk --release --verbose
+        run: flutter build apk --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -53,4 +54,6 @@ jobs:
           name: masaadi-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
-              
+
+
+
