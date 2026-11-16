@@ -1,4 +1,3 @@
-
 name: Build APK
 
 on:
@@ -25,15 +24,28 @@ jobs:
           channel: 'stable'
           cache: true
 
+      # 1. خطوة التنظيف الشامل
+      - name: Clean project
+        run: |
+          flutter clean
+          rm -rf .dart_tool
+          rm -f pubspec.lock
+
+      # 2. إنشاء مجلد أندرويد
       - name: Create Android folder
         run: flutter create --project-name personal_assistant . --platforms=android
-      - name: Auto-fix Dart code
-        run: dart fix --apply
+
+      # 3. جلب التبعيات
       - name: Get dependencies
         run: flutter pub get
 
+      # 4. محاولة إصلاح أخطاء الكود تلقائياً
+      - name: Auto-fix Dart code
+        run: dart fix --apply
+
+      # 5. محاولة البناء (سيطبع السبب الحقيقي إذا فشل)
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --verbose
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -41,3 +53,4 @@ jobs:
           name: masaadi-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
+              
