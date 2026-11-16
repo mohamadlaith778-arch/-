@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations: # <--- أضفنا هذا السطر
+    sdk: flutter          # <--- وهذا السطر
   sqflite: ^2.3.0
   path: ^1.8.3
   intl: ^0.18.1
@@ -16,3 +18,4 @@ dependencies:
 
 flutter:
   uses-material-design: true
+  
